@@ -1,0 +1,48 @@
+<!DOCTYPE html> <!-- Declares the document type and version as HTML5 -->
+
+<html lang="en"> <!-- Opens the HTML document and sets the language to English -->
+
+<head> <!-- Head section contains metadata and resources like styles and scripts -->
+    <meta charset="UTF-8"> <!-- Sets the character encoding to UTF-8 for wide language support -->
+    <title>Simple HTML5 Template</title> <!-- The title shown on the browser tab -->
+
+    <!-- Start of internal CSS styling block -->
+    <style>
+        .TitleText {
+            /* Style rule for all element of this class */
+            color: #333;
+            background-color: aqua;
+            /* Set text color to dark gray */
+        }
+    </style>
+
+</head>
+
+<body> <!-- Start of the visible content of the web page -->
+
+    <h1 class="TitleText">Hello, HTML5!</h1> <!-- Main heading displayed on the page -->
+    <!-- 'class="TitleText"' assigns a CSS class to this <h1> element.
+    A clear and descriptive class name like 'TitleText' makes your code easier to understand and maintain.
+    It tells other developers (or your future self) that this class is meant for styling title text.
+    Avoid vague names like 'box1' or 'styleA', or even without a class, which don't convey purpose. -->
+
+    <p>Click the button to see a message.</p> <!-- A paragraph -->
+    <button onclick="showMessage()">Click Me</button> <!-- Button that triggers JavaScript function when clicked -->
+    <p id="messageText">Click the button to see a message.</p> <!-- Paragraph with an ID so JavaScript can find it -->
+    <button class="TitleText" onclick="ChangeMessage()">Click Me</button>
+
+    <!-- Start of internal JavaScript block -->
+    <script>
+        function showMessage() { // Define a function named 'showMessage'
+            alert("You clicked the button!"); // Show a pop-up alert with a message
+        }
+        function ChangeMessage() { // Define a function named 'ChangeMessage'
+            // Get the paragraph element by its ID and change its text content
+            document.getElementById("messageText").textContent = "You changed the message!";
+        }
+    </script>
+
+
+</body>
+
+</html>

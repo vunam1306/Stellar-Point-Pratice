@@ -1,0 +1,180 @@
+<script setup>
+  import { ref, onMounted } from 'vue';
+  import axios from 'axios';
+  
+  // URL của backend API
+  const API_URL = 'http://localhost:3000/api/pets';
+  
+  // Biến reactive để lưu danh sách thú cưng từ API
+  const pets = ref([]);
+  
+  // Biến reactive để liên kết với các trường trong form
+  const newPet = ref({
+    name: '',
+    weight: null,
+    type: ''
+  });
+  
+  // --- FUNCTIONS ---
+  
+  // Hàm để lấy dữ liệu từ API
+  async function fetchPets() {
+    try {
+      const response = await axios.get(API_URL);
+      pets.value = response.data; // Cập nhật danh sách thú cưng
+      console.log("Fetched pets:", response.data);
+    } catch (error) {
+      console.error("Error fetching pets:", error);
+      alert("Could not fetch pet data from the server.");
+    }
+  }
+  
+  // Hàm để thêm thú cưng mới
+  async function addPet() {
+    // Kiểm tra dữ liệu đầu vào
+    if (!newPet.value.name || !newPet.value.weight || !newPet.value.type) {
+      alert("Please fill in all fields.");
+      return;
+    }
+    
+    try {
+      const petToAdd = {
+        petName: newPet.value.name,
+        petWeight: newPet.value.weight,
+        petType: newPet.value.type
+      };
+  
+      // Gửi yêu cầu POST đến API
+      await axios.post(API_URL, petToAdd);
+      
+      // Reset form sau khi thêm thành công
+      newPet.value = { name: '', weight: null, type: '' };
+  
+      // Tải lại danh sách thú cưng để hiển thị dữ liệu mới nhất
+      await fetchPets(); 
+    } catch (error) {
+      console.error("Error adding pet:", error);
+      alert("Failed to add the new pet.");
+    }
+  }
+  
+  // Gọi hàm fetchPets() khi component được tải lần đầu tiên
+  onMounted(() => {
+    fetchPets();
+  });
+  </script>
+  
+  <template>
+    <header>
+      <h1>Pet Store Inventory</h1>
+    </header>
+  
+    <main>
+      <form @submit.prevent="addPet" class="form">
+        <label for="petName">Name:</label>
+        <input type="text" name="petName" placeholder="input pet name" v-model="newPet.name">
+        
+        <label for="petWeight">Weight (kg):</label>
+        <input type="number" name="petWeight" placeholder="input pet weight" v-model="newPet.weight">
+        
+        <label for="petType">Type:</label>
+        <select name="petType" v-model="newPet.type">
+          <option value="" disabled selected>--Select a pet type--</option>
+          <option value="dog">Dog</option>
+          <option value="cat">Cat</option>
+          <option value="bird">Bird</option>
+        </select>
+  
+        <input type="submit" value="Add Pet">
+      </form>
+  
+      <table class="table">
+        <thead> <tr>
+            <th class="headerTable">ID</th>
+            <th class="headerTable">Name</th>
+            <th class="headerTable">Weight(kg)</th>
+            <th class="headerTable">Type</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="pet in pets" :key="pet.id">
+            <td>{{ pet.id }}</td>
+            <td>{{ pet.name }}</td>
+            <td>{{ pet.weight }}</td>
+            <td>{{ pet.type }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </main>
+  </template>
+  
+  <style scoped>
+  /* Giữ nguyên CSS của bạn, chỉ thêm một vài chỉnh sửa nhỏ */
+  header {
+    padding: 20px;
+    text-align: center;
+  }
+  
+  h1 {
+    color: #343a40;
+  }
+  
+  .form {
+    display: flex;
+    flex-direction: column;
+    max-width: 600px;
+    margin: 30px auto;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  label {
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
+  
+  input,
+  select {
+    margin-bottom: 15px;
+    padding: 10px;
+    border-radius: 4px;
+    border: 1px solid #ced4da;
+    font-size: 1rem;
+  }
+  
+  input[type="submit"] {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  input[type="submit"]:hover {
+    background-color: #0056b3;
+  }
+  
+  .table {
+    margin: 50px auto;
+    width: 80%;
+    max-width: 800px;
+    border-collapse: collapse; /* Thuộc tính này tốt hơn cho table */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .table th, .table td {
+    border: 1px solid #dee2e6;
+    padding: 12px 15px;
+    text-align: left;
+  }
+  
+  .headerTable {
+    background-color: #f8f9fa;
+    font-weight: bold;
+  }
+  
+  tbody tr:nth-of-type(even) {
+    background-color: #f2f2f2;
+  }
+  </style>
